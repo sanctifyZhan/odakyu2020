@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<header>
+	<!-- Global site tag (gtag.js) - Google Analytics -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-154688282-3"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'UA-154688282-3');
+	</script>
+</header>
+<!-- include A-Frame obviously -->
+<script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
+<!-- include ar.js -->
+<script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.0.0/aframe/build/aframe-ar.js"></script>
+<script>
+    AFRAME.registerComponent("listener", {
+  init: function() {
+    this.target = document.querySelector('#target'); // your video
+    this.prevPosition = null; // initially there is no position or rotation
+    this.prevRotation = null;
+  },
+
+  tick: function() {
+    if (this.el.object3D.visible) {
+      this.target.setAttribute('visible', 'true')
+
+      if(!this.prevPosition && !this.prevRotation) { 
+        // there are no values to lerp from - set the initial values
+        this.target.setAttribute('position', this.el.getAttribute('position'))
+        this.target.setAttribute('rotation', this.el.getAttribute('rotation'))
+      } else {
+        // use the previous values to get an approximation 
+        this.target.object3D.position.lerp(this.prevPosition, 0.1)
+
+        // this (below) may seem ugly, but the rotation is a euler, not a THREE.Vector3, 
+        // so to use the lerp function i'm doing some probably unnecessary conversions
+        let rot = this.target.object3D.rotation.toVector3().lerp(this.prevRotation, 0.1)
+        this.target.object3D.rotation.setFromVector3(rot)
+      }
+      // update the values
+      this.prevPosition = this.el.object3D.position
+      this.prevRotation = this.el.object3D.rotation
+    } else {
+     // the marker dissapeared - reset the values
+     this.target.setAttribute('visible', 'false')
+     this.prevPosition = null;
+     this.prevRotation = null;
+   }
+  }
+})
+  </script>
+<!-- to load .ply model -->
+<script src="https://rawgit.com/donmccurdy/aframe-extras/v6.0.0/dist/aframe-extras.loaders.min.js"></script>
+<body style="margin : 0px; overflow: hidden;">
+<a-scene embedded arjs=" debugUIEnabled: false; sourceType: webcam; detectionMode: mono;" vr-mode-ui="enabled: false" >
+    <a-assets>
+      <img id="Illustration_02" src="image/Illustration_02-2.png">
+      <img id="Cloud01a" src="image/Cloud01-2_a.png">
+      <img id="Cloud03a" src="image/Cloud-03_a.png">
+
+      <img id="Cloud03b" src="image/Cloud-03_b.png">
+      <img id="Illustration_09" src="image/Illustration_09-2.png">
+      <img id="Illustration_03" src="image/Illustration_03-2.png">
+      <img id="Cloud01b" src="image/Cloud01-2_b.png">
+    
+      <img id="Cloud02" src="image/Cloud-02.png">
+      <img id="Illustration_08" src="image/Illustration_08-2.png">
+      <img id="Illustration_06" src="image/Illustration_06-2.png">      
+      <img id="Illustration_07" src="image/Illustration_07-2.png">
+    </a-assets>
+  
+    <a-marker type="pattern" url="marker/pattern-marker_c.patt">
+     <a-entity position="3.5 0 0" scale="2.2 2.2 2.2" id="target">
+              <a-image src="#Illustration_08" position="-0.3 -1.5 -1.8" scale="0.7 0.7 0.7" rotation="270 0 0"  transparent="False"></a-image>
+              <a-image src="#Illustration_06" position="-0.9 -0.7 -1" scale="0.5 1 2.3" rotation="270 0 0"  transparent="False"></a-image>
+
+              <a-image src="#Illustration_02" position="1.5 -1.1 -2" scale="0.5 1 1.5" rotation="270 0 0"  transparent="False"></a-image>
+              <a-image src="#Cloud02" position="1 -1 -1.5" scale="1.8 0.8 0.4" rotation="270 0 0"  transparent="False"></a-image>
+              <a-image src="#Cloud01b" position="-0.5 -0.55 -0.75" scale="1.3 1 1" rotation="270 0 0"  transparent="False"></a-image>
+              <a-image src="#Illustration_03" position="-0.5 -0.45 -0.6" scale="0.5 1.2 2.2" rotation="270 0 0"  transparent="False"></a-image>
+
+
+              <a-image src="#Cloud03b" position="1.2 0.1 -0.85" scale="0.5 0.25 1" rotation="270 0 0"  transparent="False"></a-image>
+              <a-image src="#Illustration_09" position="0.7 0.1 -0.7" scale="0.6 1.4 2.1" rotation="270 0 0"  transparent="False"></a-image>
+              <a-image src="#Cloud03a" position="0.9 0.2 -0.4" scale="1.8 1 1" rotation="270 0 0"  transparent="False"></a-image>
+
+              <a-image src="#Cloud01a" position="-0.6 0.4 -0.2" scale="2 1 1" rotation="270 0 0"  transparent="False"></a-image>
+
+              <a-image src="#Illustration_07" position="0.9 0.9 -0.1" scale="1 1 1" rotation="270 0 0"  transparent="False"></a-image>
+</a-entity>
+    </a-marker>
+  <a-entity camera></a-entity>
+  </a-scene>
+  </body>
+</html>
